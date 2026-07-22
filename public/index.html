@@ -6,6 +6,12 @@
   <meta name="description" content="番时计：只展示番剧资料、季度新番与开播日程，不提供播放或下载。">
   <meta name="author" content="agcenn">
   <title>番时计 · Anime Almanac</title>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('fanshiji-theme');
+      document.documentElement.dataset.theme = savedTheme === 'dark' ? 'dark' : 'light';
+    })();
+  </script>
   <link rel="icon" type="image/png" href="/logo.png">
   <link rel="apple-touch-icon" href="/logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -21,11 +27,15 @@
         <img class="brand-logo" src="/logo.png" alt="">
         <span class="brand-wordmark">番時計</span>
       </a>
-      <div class="flex items-center gap-4">
+      <div class="header-actions flex items-center gap-4">
         <label class="header-search" aria-label="搜索番剧">
           <span aria-hidden="true">⌕</span>
           <input id="search" placeholder="搜索番剧" autocomplete="off">
         </label>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="切换为深色主题" aria-pressed="false">
+          <span class="theme-icon" aria-hidden="true">◐</span>
+          <span class="theme-label">深色</span>
+        </button>
         <div class="hidden sm:flex items-center gap-4 text-sm font-bold">
           <button data-mode="upcoming" class="nav-link active">放送予定</button>
           <button data-mode="archive" class="nav-link">作品資料庫</button>

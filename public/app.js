@@ -90,11 +90,21 @@ async function showDetail(id) {
   const item = await fetch(`/api/anime/${id}`).then(r => r.json());
   const [status] = statusInfo(item);
   const cover = escapeHtml(item.cover_large || '');
-  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="--cover-image:url('${cover}')"><img src="${cover}" alt="${escapeHtml(titleOf(item))}封面"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 形式</small><b>${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作类型</small><b>${sourceLabels[item.source] || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>题材类型</small><b>${escapeHtml(genresOf(item.genres))}</b></div></div><div class="description">${cleanText(item.description_chinese)}</div></div></div>`;
+  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" role="img" aria-label="${escapeHtml(titleOf(item))}封面" style="background-image:url('${cover}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><section class="detail-summary"><p class="detail-summary-label">作品简介</p><div class="description">${cleanText(item.description_chinese)}</div></section><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 形式</small><b>${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作类型</small><b>${sourceLabels[item.source] || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>题材类型</small><b>${escapeHtml(genresOf(item.genres))}</b></div></div></div></div>`;
   $('#detail').showModal();
 }
 
+function applyTheme(theme) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  localStorage.setItem('fanshiji-theme', isDark ? 'dark' : 'light');
+  $('#themeToggle').setAttribute('aria-pressed', String(isDark));
+  $('#themeToggle').setAttribute('aria-label', isDark ? '切换为白色主题' : '切换为深色主题');
+  $('.theme-label').textContent = isDark ? '白色' : '深色';
+}
+
 async function init() {
+  applyTheme(document.documentElement.dataset.theme);
   const meta = await fetch('/api/anime/meta').then(r => r.json()).catch(() => ({ years: [] }));
   state.meta = meta;
   $('#year').insertAdjacentHTML('beforeend', meta.years.map(y => `<option>${y}</option>`).join(''));
@@ -115,4 +125,5 @@ $('#grid').addEventListener('keydown', e => { if(e.key==='Enter' && e.target.mat
 $('#closeDetail').addEventListener('click', () => $('#detail').close());
 $('#detail').addEventListener('click', e => { if(e.target === $('#detail')) $('#detail').close(); });
 $('#mobileMenu').addEventListener('click', () => document.querySelector('[data-mode="upcoming"]').scrollIntoView({behavior:'smooth'}));
+$('#themeToggle').addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
 init();
