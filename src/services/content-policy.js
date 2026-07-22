@@ -10,7 +10,19 @@ const BLOCKED_FRANCHISE_TERMS = Object.freeze([
   '僕のヒーローアカデミア',
   '我的英雄学院',
   '我的英雄学园',
-  'ヒロアカ'
+  'ヒロアカ',
+  'chikyuu daisuki! kikkun',
+  '地球大好き!きっくん',
+  '我爱地球! kikkun',
+  "let's roll, cinnamoroll",
+  'レッツロールシナモロール',
+  "let's roll肉桂醇",
+  'pan no akachan',
+  'パンの赤ちゃん',
+  '婴儿面包',
+  'tomica & tom',
+  'トミカとトム',
+  'tomica和tom'
 ]);
 
 const normalize = value => String(value || '').normalize('NFKC').toLocaleLowerCase('en-US');

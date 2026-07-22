@@ -10,7 +10,8 @@
     "start": "node src/server.js",
     "sync": "node src/scripts/sync-now.js",
     "sync:titles": "node src/scripts/enrich-chinese-now.js",
-    "sync:descriptions": "node src/scripts/enrich-descriptions-now.js"
+    "sync:descriptions": "node src/scripts/enrich-descriptions-now.js",
+    "audit:covers": "node src/scripts/audit-covers.js"
   },
   "engines": {
     "node": ">=22"

@@ -67,6 +67,13 @@ async function load(reset = true) {
   try {
     const response = await fetch(`/api/anime?${params}`), data = await response.json();
     $('#grid').insertAdjacentHTML('beforeend', data.items.map(card).join(''));
+    // 横版原图不再强行放大裁成竖版，完整展示可避免低清封面进一步模糊。
+    $('#grid').querySelectorAll('.poster img:not([data-quality-ready])').forEach(image => {
+      image.dataset.qualityReady = 'true';
+      const applyCoverFit = () => image.classList.toggle('wide-cover', image.naturalWidth / image.naturalHeight > 0.9);
+      if (image.complete && image.naturalWidth) applyCoverFit();
+      else image.addEventListener('load', applyCoverFit, { once: true });
+    });
     state.pages = data.pagination.pages;
     $('#resultInfo').textContent = `共 ${data.pagination.total} 部 · 第 ${data.pagination.page} 页`;
     $('#empty').classList.toggle('hidden', data.items.length > 0 || state.page > 1);
@@ -78,7 +85,7 @@ async function load(reset = true) {
 async function showDetail(id) {
   const item = await fetch(`/api/anime/${id}`).then(r => r.json());
   const [status] = statusInfo(item);
-  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 形式</small><b>${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作类型</small><b>${sourceLabels[item.source] || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>题材类型</small><b>${escapeHtml(genresOf(item.genres))}</b></div></div><div class="description">${cleanText(item.description_chinese)}</div></div></div>`;
+  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-400">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 形式</small><b>${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作类型</small><b>${sourceLabels[item.source] || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>题材类型</small><b>${escapeHtml(genresOf(item.genres))}</b></div></div><div class="description">${cleanText(item.description_chinese)}</div></div></div>`;
   $('#detail').showModal();
 }
 

@@ -12,9 +12,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
 </head>
-<body class="min-h-screen text-stone-900">
+<body class="min-h-screen">
   <header class="max-w-7xl mx-auto px-5 pt-7">
-    <nav class="flex items-center justify-between border-b border-stone-900/15 pb-5">
+    <nav class="flex items-center justify-between border-b border-white/15 pb-5">
       <a href="#" class="brand text-2xl font-black tracking-tight">番時計<span>°</span></a>
       <div class="flex items-center gap-4">
         <label class="header-search" aria-label="搜索番剧">
@@ -26,7 +26,7 @@
           <button data-mode="archive" class="nav-link">作品資料庫</button>
           <a href="#about" class="nav-link">关于本站</a>
         </div>
-        <button id="mobileMenu" class="sm:hidden border border-stone-900 rounded-full px-4 py-2 text-sm font-bold">菜单</button>
+        <button id="mobileMenu" class="sm:hidden border border-white/60 rounded-full px-4 py-2 text-sm font-bold">菜单</button>
       </div>
     </nav>
   </header>
@@ -38,16 +38,16 @@
         <h1 class="text-[clamp(3.2rem,8vw,7.5rem)] leading-[.82] font-black tracking-[-.065em]">下一季，<br><i>准时抵达。</i></h1>
       </div>
       <div class="lg:pb-2">
-        <p class="text-lg leading-8 text-stone-600 max-w-xl">追踪新番开播日期、制作阵容与企划状态。纯粹的动画资讯索引，没有播放，没有下载。</p>
-        <div class="mt-7 flex gap-8 border-t border-stone-900/15 pt-5">
-          <div><strong id="totalCount" class="block text-3xl font-black">—</strong><span class="text-xs text-stone-500">收录作品</span></div>
-          <div><strong id="nextCount" class="block text-3xl font-black">—</strong><span class="text-xs text-stone-500">待开播</span></div>
-          <div><strong id="updateTime" class="block text-sm font-black pt-2">等待同步</strong><span class="text-xs text-stone-500">资料更新</span></div>
+        <p class="text-lg leading-8 text-stone-300 max-w-xl">追踪新番开播日期、制作阵容与企划状态。纯粹的动画资讯索引，没有播放，没有下载。</p>
+        <div class="mt-7 flex gap-8 border-t border-white/15 pt-5">
+          <div><strong id="totalCount" class="block text-3xl font-black">—</strong><span class="text-xs text-stone-400">收录作品</span></div>
+          <div><strong id="nextCount" class="block text-3xl font-black">—</strong><span class="text-xs text-stone-400">待开播</span></div>
+          <div><strong id="updateTime" class="block text-sm font-black pt-2">等待同步</strong><span class="text-xs text-stone-400">资料更新</span></div>
         </div>
       </div>
     </section>
 
-    <section class="sticky-filter border-y border-stone-900/15 bg-[#f3f0e8]/95 backdrop-blur">
+    <section class="sticky-filter border-y border-white/15 bg-[#090b0a]/95 backdrop-blur">
       <div class="max-w-7xl mx-auto px-5 py-4 flex flex-wrap justify-end gap-3">
         <select id="year" class="archive-filter"><option value="">全部年份</option></select>
         <select id="season" class="archive-filter"><option value="">全部季度</option><option value="WINTER">冬 · 1月</option><option value="SPRING">春 · 4月</option><option value="SUMMER">夏 · 7月</option><option value="FALL">秋 · 10月</option></select>
@@ -74,14 +74,14 @@
       </div>
       <div class="flex justify-between items-baseline mb-7">
         <h2 id="sectionTitle" class="text-3xl md:text-4xl font-black tracking-tight">放送予定</h2>
-        <p id="resultInfo" class="text-xs font-bold text-stone-500 tracking-widest uppercase">Loading archive</p>
+        <p id="resultInfo" class="text-xs font-bold text-stone-400 tracking-widest uppercase">正在载入</p>
       </div>
       <div id="grid" class="anime-grid"></div>
-      <div id="empty" class="hidden py-24 text-center"><p class="text-5xl mb-4">◌</p><h3 class="font-black text-2xl">没有符合条件的作品</h3><p class="text-stone-500 mt-2">换一个年份、季度或关键词试试。</p></div>
+      <div id="empty" class="hidden py-24 text-center"><p class="text-5xl mb-4">◌</p><h3 class="font-black text-2xl">没有符合条件的作品</h3><p class="text-stone-400 mt-2">换一个年份、季度或关键词试试。</p></div>
       <div class="flex justify-center mt-12"><button id="loadMore" class="load-more hidden">继续浏览 <span>↓</span></button></div>
     </section>
 
-    <section id="about" class="bg-[#242823] text-[#f3f0e8] mt-12">
+    <section id="about" class="bg-[#050605] text-[#f4f1e9] mt-12">
       <div class="max-w-7xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-10">
         <h2 class="text-4xl font-black">只做日历，<br>不做影院。</h2>
         <div class="text-stone-300 leading-7 text-sm"><p>由 <a class="text-white underline underline-offset-4" href="https://github.com/agcenn" target="_blank" rel="noopener">agcenn</a> 创建。主数据来自 AniList，中文译名由 CC BY 4.0 授权的 bangumi-data 补充。本站仅展示作品元数据、封面、简介和日期，不托管、不解析、不下载、不跳转至任何影视资源。</p><p class="mt-4">作品名称、图片及简介版权归原作者、制作委员会与相关权利人所有。数据如有偏差，请以官方发布为准。</p></div>
@@ -90,7 +90,7 @@
   </main>
 
   <dialog id="detail"><div id="detailContent"></div><button id="closeDetail" aria-label="关闭">×</button></dialog>
-  <footer class="bg-[#242823] text-stone-500 border-t border-white/10"><div class="max-w-7xl mx-auto px-5 py-6 flex justify-between text-xs"><span>© 2026 agcenn</span><span>Metadata via AniList · 中文译名 via bangumi-data</span></div></footer>
+  <footer class="bg-[#050605] text-stone-400 border-t border-white/10"><div class="max-w-7xl mx-auto px-5 py-6 flex justify-between text-xs"><span>© 2026 agcenn</span><span>Metadata via AniList · 中文译名 via bangumi-data</span></div></footer>
   <script src="/app.js"></script>
 </body>
 </html>
