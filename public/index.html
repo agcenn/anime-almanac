@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="description" content="番时计：只展示番剧资料、季度新番与开播日程，不提供播放或下载。">
+  <meta name="author" content="agcenn">
   <title>番时计 · Anime Almanac</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -62,13 +63,13 @@
     <section id="about" class="bg-[#242823] text-[#f3f0e8] mt-12">
       <div class="max-w-7xl mx-auto px-5 py-16 grid md:grid-cols-2 gap-10">
         <h2 class="text-4xl font-black">只做日历，<br>不做影院。</h2>
-        <div class="text-stone-300 leading-7 text-sm"><p>本站数据来自 AniList 公开 GraphQL API，仅展示作品元数据、封面、简介和日期。本站不托管、不解析、不下载、不跳转至任何影视资源。</p><p class="mt-4">作品名称、图片及简介版权归原作者、制作委员会与相关权利人所有。数据如有偏差，请以官方发布为准。</p></div>
+        <div class="text-stone-300 leading-7 text-sm"><p>由 <a class="text-white underline underline-offset-4" href="https://github.com/agcenn" target="_blank" rel="noopener">agcenn</a> 创建。主数据来自 AniList，中文译名由 CC BY 4.0 授权的 bangumi-data 补充。本站仅展示作品元数据、封面、简介和日期，不托管、不解析、不下载、不跳转至任何影视资源。</p><p class="mt-4">作品名称、图片及简介版权归原作者、制作委员会与相关权利人所有。数据如有偏差，请以官方发布为准。</p></div>
       </div>
     </section>
   </main>
 
   <dialog id="detail"><div id="detailContent"></div><button id="closeDetail" aria-label="关闭">×</button></dialog>
-  <footer class="bg-[#242823] text-stone-500 border-t border-white/10"><div class="max-w-7xl mx-auto px-5 py-6 flex justify-between text-xs"><span>© 2026 番時計</span><span>Metadata via AniList</span></div></footer>
+  <footer class="bg-[#242823] text-stone-500 border-t border-white/10"><div class="max-w-7xl mx-auto px-5 py-6 flex justify-between text-xs"><span>© 2026 agcenn</span><span>Metadata via AniList · 中文译名 via bangumi-data</span></div></footer>
   <script src="/app.js"></script>
 </body>
 </html>

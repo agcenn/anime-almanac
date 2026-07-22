@@ -3,7 +3,8 @@ const labels = { WINTER: '冬', SPRING: '春', SUMMER: '夏', FALL: '秋', TV_SH
 const $ = selector => document.querySelector(selector);
 const escapeHtml = text => String(text ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const cleanText = text => escapeHtml(text || '暂无简介').replace(/\n/g, '<br>');
-const titleOf = item => item.title_chinese || item.title_english || item.title_romaji || item.title_native;
+// 主标题只展示正式中文译名；尚未公布的作品不以英文或罗马字冒充中文名。
+const titleOf = item => item.title_chinese || '中文译名待公布';
 
 function daysUntil(date) {
   if (!date) return null;

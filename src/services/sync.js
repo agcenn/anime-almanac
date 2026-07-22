@@ -1,5 +1,6 @@
 const db = require('../db');
 const { fetchAnime } = require('./anilist');
+const { enrichChineseTitles } = require('./bangumi');
 
 const upsert = db.prepare(`
   INSERT INTO anime (id,title_romaji,title_native,title_english,title_chinese,description,cover_large,banner_image,format,status,season,season_year,start_date,end_date,episodes,duration,genres,studios,source,site_url,updated_at)
@@ -31,8 +32,9 @@ async function syncAnime() {
   try {
     const items = await fetchAnime();
     writeBatch(items);
+    const chineseTitles = await enrichChineseTitles(items);
     db.prepare("UPDATE sync_log SET finished_at=?,status='SUCCESS',records=? WHERE id=?").run(new Date().toISOString(), items.length, log.lastInsertRowid);
-    return { records: items.length };
+    return { records: items.length, chineseTitles };
   } catch (error) {
     db.prepare("UPDATE sync_log SET finished_at=?,status='FAILED',message=? WHERE id=?").run(new Date().toISOString(), error.message, log.lastInsertRowid);
     throw error;

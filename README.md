@@ -2,6 +2,8 @@
 
 一个只展示动画元数据、封面、简介、制作信息和开播日期的轻量站点。**不提供视频播放、解析、下载、影视资源链接或资源引流。**
 
+作者：[agcenn](https://github.com/agcenn)。主数据来自 AniList，正式中文译名由开源 `bangumi-data` 数据包补充。同步从源头排除 AniList 成人分级、`Hentai` 与 `Ecchi` 类型作品。
+
 ## 项目目录
 
 ```text
@@ -34,6 +36,7 @@
 npm install
 copy .env.example .env     # Windows；macOS/Linux 使用 cp
 npm run sync              # 首次拉取 AniList 数据
+npm run sync:titles       # 仅补充数据库中缺失的正式中文译名
 npm run dev
 ```
 
@@ -49,7 +52,9 @@ npm run dev
 
 本站使用 `https://graphql.anilist.co` 的公开 GraphQL 接口。读取公开动画资料**无需申请 API Key**，也不需要 OAuth。AniList 有速率限制，代码对 429 响应做了有限退避重试；请勿把同步频率设置得过高。若将来使用用户账户功能，才需要按 AniList OAuth 文档注册客户端，但本项目没有也不需要此能力。
 
-AniList 不保证中文译名。当前数据库预留 `title_chinese` 字段，但自动同步不会擅自机器翻译；页面按中文、英文、罗马字、日文顺序回退展示。
+AniList 不保证中文译名。数据库使用 `title_chinese` 字段保存经匹配的正式中文译名，页面主标题只显示该字段；缺失时显示“中文译名待公布”。
+
+本站使用 CC BY 4.0 授权的 `bangumi-data`，只读取原始标题、简体中文译名与日期进行本地匹配，不读取其中的播放或资源站点字段。未能可靠匹配的作品显示“中文译名待公布”，不会把英文名或机器翻译冒充正式中文名。
 
 ## 定时更新
 
@@ -81,5 +86,6 @@ GitHub 负责源码托管，不等于 Node.js 服务已上线；如仅启用 Git
 - 仅展示事实性元数据、排期、封面与简介；图片和文本版权归各权利人所有。
 - 不新增播放、在线播放、视频解析、磁力、网盘、下载、种子、字幕下载或影视资源链接功能。
 - 不抓取国内视频站、盗版站或其他未经授权的数据源。
+- AniList 查询设置 `isAdult: false` 并排除 `Hentai`、`Ecchi` 类型；Bangumi 候选也排除 `nsfw` 条目。
 - AniList 数据可能延迟或有误，正式日期应以动画官方公告为准。
 - 商用或公开运营前，应核对 AniList API 条款、图片使用政策，并准备权利人投诉与下架渠道。

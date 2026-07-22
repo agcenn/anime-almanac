@@ -6,7 +6,11 @@ const decodeRow = row => row && ({ ...row, genres: JSON.parse(row.genres), studi
 
 router.get('/', (req, res) => {
   const { year, season, status, format, q = '', page = '1', limit = '24' } = req.query;
-  const where = [], params = {};
+  // 防御性过滤：即使旧数据库尚未重新同步，也不向页面返回 Ecchi 条目。
+  const where = [
+    `genres NOT LIKE '%"Ecchi"%'`,
+    `genres NOT LIKE '%"Hentai"%'`
+  ], params = {};
   if (year) { where.push('season_year = @year'); params.year = Number(year); }
   if (season) { where.push('season = @season'); params.season = String(season).toUpperCase(); }
   if (status === 'archive') where.push("status IN ('FINISHED','RELEASING')");

@@ -4,7 +4,7 @@ const QUERY = `
 query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyDateInt!) {
   Page(page: $page, perPage: $perPage) {
     pageInfo { hasNextPage }
-    media(type: ANIME, sort: START_DATE, startDate_greater: $start, startDate_lesser: $end) {
+    media(type: ANIME, isAdult: false, genre_not_in: ["Ecchi", "Hentai"], sort: START_DATE, startDate_greater: $start, startDate_lesser: $end) {
       id title { romaji english native } description(asHtml: false)
       coverImage { extraLarge large } bannerImage format status season seasonYear
       startDate { year month day } endDate { year month day }
@@ -55,12 +55,14 @@ async function fetchAnime() {
     all.push(...result.media);
     if (!result.pageInfo.hasNextPage) break;
   }
-  return all.map(item => ({
+  return all
+    .filter(item => !item.genres?.some(genre => genre === 'Ecchi' || genre === 'Hentai'))
+    .map(item => ({
     id: item.id,
     title_romaji: item.title.romaji,
     title_native: item.title.native,
     title_english: item.title.english,
-    // AniList 不保证中文标题；展示时按 native/romaji 回退，不凭空翻译。
+    // AniList 不保证中文标题；稍后由 Bangumi 的正式 name_cn 字段补充。
     title_chinese: null,
     description: item.description,
     // 优先使用 AniList 的最高分辨率封面；旧作品缺图时再回退到 large。
@@ -78,8 +80,8 @@ async function fetchAnime() {
     studios: JSON.stringify(item.studios?.nodes?.map(node => node.name) || []),
     source: item.source,
     site_url: item.siteUrl,
-    updated_at: new Date().toISOString()
-  }));
+      updated_at: new Date().toISOString()
+    }));
 }
 
 module.exports = { fetchAnime };

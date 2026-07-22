@@ -3,14 +3,19 @@
   "version": "1.0.0",
   "private": true,
   "description": "仅展示番剧资料与开播日程的轻量资讯站",
+  "author": "agcenn",
   "main": "src/server.js",
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "sync": "node src/scripts/sync-now.js"
+    "sync": "node src/scripts/sync-now.js",
+    "sync:titles": "node src/scripts/enrich-chinese-now.js"
   },
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
+    "bangumi-data": "^0.3.214",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "helmet": "^8.0.0",
