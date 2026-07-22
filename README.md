@@ -4,7 +4,8 @@
 
 主数据来自 AniList，正式中文译名由开源 `bangumi-data` 数据包补充。同步从源头排除 AniList 成人分级、`Hentai` 与 `Ecchi` 类型作品。
 
-链接：http://localhost:3000/#about
+链接1：http://localhost:3000/#about
+链接2：https://fanshiji.onrender.com/#
 
 ## 版权与使用边界
 
