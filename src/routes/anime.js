@@ -20,7 +20,6 @@ function releaseWindow(now = new Date()) {
   return {
     year,
     season,
-    today: `${year}-${String(month).padStart(2, '0')}-${String(dateParts.day).padStart(2, '0')}`,
     currentStart: `${year}-${String(currentMonth).padStart(2, '0')}-01`,
     futureStart: `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`
   };
@@ -67,8 +66,10 @@ router.get('/', (req, res) => {
   const filterParams = { ...params };
   const take = Math.min(Math.max(Number(limit) || 24, 1), 60);
   const current = Math.max(Number(page) || 1, 1);
-  params.today = window.today; params.limit = take; params.offset = (current - 1) * take;
-  const items = db.prepare(`SELECT * FROM anime ${clause} ORDER BY CASE WHEN start_date IS NULL THEN 1 ELSE 0 END,ABS(julianday(start_date) - julianday(@today)) ASC,start_date ASC,id ASC LIMIT @limit OFFSET @offset`).all(params).map(decodeRow);
+  params.limit = take; params.offset = (current - 1) * take;
+  // 放送日程按日期正序，向下滚动时日期只会越来越晚；资料库则保留新作优先。
+  const dateOrder = scope || status === 'upcoming' ? 'ASC' : 'DESC';
+  const items = db.prepare(`SELECT * FROM anime ${clause} ORDER BY CASE WHEN start_date IS NULL THEN 1 ELSE 0 END,start_date ${dateOrder},id ASC LIMIT @limit OFFSET @offset`).all(params).map(decodeRow);
   const total = db.prepare(`SELECT COUNT(*) total FROM anime ${clause}`).get(filterParams).total;
   res.json({ items, pagination: { page: current, limit: take, total, pages: Math.ceil(total / take) } });
 });
