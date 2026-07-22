@@ -9,6 +9,12 @@ function daysUntil(date) {
   if (!date) return null;
   return Math.ceil((new Date(`${date}T00:00:00`) - new Date()) / 86400000);
 }
+function airDateLabel(date) {
+  if (!date) return '日期待定';
+  const weekdays = '日一二三四五六';
+  const weekday = weekdays[new Date(`${date}T00:00:00Z`).getUTCDay()];
+  return `${date.replace(/-/g, '.')} · 周${weekday}`;
+}
 function statusInfo(item) {
   if (item.status === 'HIATUS') return ['延期 / 暂停', 'alert'];
   if (!item.start_date && item.status === 'NOT_YET_RELEASED') return ['未定档', 'alert'];
@@ -19,7 +25,7 @@ function statusInfo(item) {
 function card(item) {
   const [status, kind] = statusInfo(item), days = daysUntil(item.start_date);
   const countdown = item.status === 'NOT_YET_RELEASED' && days !== null ? `<span class="countdown">${days > 0 ? `T−${days} DAYS` : days === 0 ? 'TODAY' : 'DATE PENDING'}</span>` : '';
-  return `<article class="anime-card" data-id="${item.id}" tabindex="0"><div class="poster"><img src="${escapeHtml(item.cover_large || '')}" alt="${escapeHtml(titleOf(item))}封面" loading="lazy"><span class="badge ${kind}">${status}</span>${countdown}</div><p class="card-meta">${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || 'ANIME'}</p><h3 class="card-title">${escapeHtml(titleOf(item))}</h3><p class="card-native">${escapeHtml(item.title_native || item.title_romaji)}</p></article>`;
+  return `<article class="anime-card" data-id="${item.id}" tabindex="0"><div class="poster"><img src="${escapeHtml(item.cover_large || '')}" alt="${escapeHtml(titleOf(item))}封面" loading="lazy"><span class="badge ${kind}">${status}</span>${countdown}</div><p class="card-meta">${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || 'ANIME'}</p><h3 class="card-title">${escapeHtml(titleOf(item))}</h3><p class="card-native">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="airdate-row"><span>首播</span><strong>${airDateLabel(item.start_date)}</strong></div></article>`;
 }
 
 async function load(reset = true) {
@@ -42,7 +48,7 @@ async function load(reset = true) {
 async function showDetail(id) {
   const item = await fetch(`/api/anime/${id}`).then(r => r.json());
   const [status] = statusInfo(item);
-  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item"><small>开播日期</small><b>${item.start_date || '未定档'}</b></div><div class="detail-item"><small>季度 / 类型</small><b>${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || '—'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>原作</small><b>${labels[item.source] || item.source || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>类型</small><b>${escapeHtml(item.genres.join(' / ') || '未分类')}</b></div></div><div class="description">${cleanText(item.description)}</div></div></div>`;
+  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 类型</small><b>${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || '—'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>原作</small><b>${labels[item.source] || item.source || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>类型</small><b>${escapeHtml(item.genres.join(' / ') || '未分类')}</b></div></div><div class="description">${cleanText(item.description)}</div></div></div>`;
   $('#detail').showModal();
 }
 
