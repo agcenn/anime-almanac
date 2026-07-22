@@ -15,7 +15,10 @@ html { background: var(--paper); scroll-behavior: smooth; }
 body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans SC', sans-serif; }
 ::selection { background: var(--red); color: #fff; }
 .brand, .hero h1, #sectionTitle { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; }
-.brand span, .hero i { color: var(--red); font-style: normal; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); }
+.brand-logo { width: 40px; height: 40px; flex: none; object-fit: contain; }
+.brand-wordmark { color: var(--ink); }
+.hero i { color: var(--red); font-style: normal; }
 .eyebrow { font: 700 11px 'Space Grotesk'; letter-spacing: .18em; display: flex; align-items: center; gap: 10px; }
 .eyebrow span { width: 9px; height: 9px; background: var(--red); border-radius: 50%; }
 .nav-link { position: relative; padding: 8px 0; }

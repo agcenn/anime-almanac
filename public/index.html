@@ -6,6 +6,8 @@
   <meta name="description" content="番时计：只展示番剧资料、季度新番与开播日程，不提供播放或下载。">
   <meta name="author" content="agcenn">
   <title>番时计 · Anime Almanac</title>
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="apple-touch-icon" href="/logo.png">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +17,10 @@
 <body class="min-h-screen">
   <header class="max-w-7xl mx-auto px-5 pt-7">
     <nav class="flex items-center justify-between border-b border-white/15 pb-5">
-      <a href="#" class="brand text-2xl font-black tracking-tight">番時計<span>°</span></a>
+      <a href="#" class="brand text-2xl font-black tracking-tight" aria-label="番時計首页">
+        <img class="brand-logo" src="/logo.png" alt="">
+        <span class="brand-wordmark">番時計</span>
+      </a>
       <div class="flex items-center gap-4">
         <label class="header-search" aria-label="搜索番剧">
           <span aria-hidden="true">⌕</span>
