@@ -1,24 +1,25 @@
 :root {
   color-scheme: dark;
-  --paper: #090b0a;
-  --surface: #111411;
-  --surface-soft: #171a18;
-  --ink: #f4f1e9;
-  --muted: #a4aaa3;
-  --line: rgba(255, 255, 255, .14);
-  --red: #ff5a43;
+  --paper: #18191c;
+  --surface: #232428;
+  --surface-soft: #2b2c30;
+  --ink: #f1f2f3;
+  --muted: #a2a7ae;
+  --line: rgba(255, 255, 255, .1);
+  --red: #fb7299;
+  --blue: #00aeec;
 }
 
 * { box-sizing: border-box; }
 html { background: var(--paper); scroll-behavior: smooth; }
-body { background: radial-gradient(circle at 76% 8%, #171a17 0, var(--paper) 32%, #070807 100%); color: var(--ink); font-family: 'Noto Sans SC', sans-serif; }
+body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans SC', sans-serif; }
 ::selection { background: var(--red); color: #fff; }
 .brand, .hero h1, #sectionTitle { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; }
 .brand span, .hero i { color: var(--red); font-style: normal; }
 .eyebrow { font: 700 11px 'Space Grotesk'; letter-spacing: .18em; display: flex; align-items: center; gap: 10px; }
 .eyebrow span { width: 9px; height: 9px; background: var(--red); border-radius: 50%; }
 .nav-link { position: relative; padding: 8px 0; }
-.nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 2px; background: var(--red); transition: .2s; }
+.nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 2px; background: var(--blue); transition: .2s; }
 .nav-link.active::after, .nav-link:hover::after { right: 0; }
 .header-search { width: 190px; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid var(--line); background: rgba(255, 255, 255, .035); transition: border-color .18s, background .18s; }
 .header-search:focus-within { border-color: var(--ink); background: rgba(255, 255, 255, .08); }
@@ -35,17 +36,18 @@ select option { color: var(--ink); background: var(--surface); }
 .segment-group { display: flex; gap: 4px; }
 .segment { min-width: 104px; padding: 10px 16px; border: 1px solid var(--line); font-size: 13px; font-weight: 900; transition: .18s ease; }
 .segment:hover { border-color: var(--ink); }
-.segment.active { border-color: var(--ink); background: var(--ink); color: #090b0a; }
+.segment.active { border-color: var(--blue); background: var(--blue); color: #fff; }
 .origin-mark { color: var(--red); font-weight: 900; }
 .anime-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 30px 14px; }
 .anime-card { cursor: pointer; min-width: 0; }
 .poster { aspect-ratio: 3/4; overflow: hidden; background: var(--surface-soft); position: relative; }
-.poster img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
-.poster img.wide-cover { object-fit: contain; padding: 8px; background: #050605; }
+.poster img { width: 100%; height: 100%; object-fit: cover; image-rendering: auto; transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+.poster img.quality-fit { object-fit: contain; padding: 8px; background: var(--surface); }
 .anime-card:hover .poster img { transform: scale(1.035); }
-.badge { position: absolute; top: 10px; left: 10px; color: var(--ink); background: rgba(9, 11, 10, .9); border: 1px solid rgba(255, 255, 255, .16); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
+.anime-card:hover .poster img.quality-fit { transform: none; }
+.badge { position: absolute; top: 10px; left: 10px; color: var(--ink); background: rgba(24, 25, 28, .92); border: 1px solid rgba(255, 255, 255, .14); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
 .badge.alert { background: var(--red); color: white; }
-.countdown { position: absolute; right: 0; bottom: 0; background: var(--ink); color: #090b0a; padding: 10px 12px; font: 700 11px 'Space Grotesk'; }
+.countdown { position: absolute; right: 0; bottom: 0; background: var(--ink); color: var(--paper); padding: 10px 12px; font: 700 11px 'Space Grotesk'; }
 .card-meta { font: 700 10px 'Space Grotesk'; letter-spacing: .1em; color: var(--muted); margin-top: 13px; text-transform: uppercase; }
 .card-title { font-size: 17px; line-height: 1.35; font-weight: 900; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-native { font-size: 11px; color: var(--muted); margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -54,11 +56,13 @@ select option { color: var(--ink); background: var(--surface); }
 .airdate-row strong { font: 700 12px 'Space Grotesk', 'Noto Sans SC'; letter-spacing: .015em; white-space: nowrap; }
 .load-more { border-bottom: 2px solid var(--ink); font-size: 13px; font-weight: 900; padding: 10px 2px; }
 .load-more span { color: var(--red); margin-left: 8px; }
-dialog { padding: 0; border: 1px solid var(--line); max-width: 920px; width: calc(100% - 24px); background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px #000c; }
-dialog::backdrop { background: #000d; backdrop-filter: blur(5px); }
+dialog { padding: 0; border: 1px solid var(--line); max-width: 920px; width: calc(100% - 24px); background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px #0009; }
+dialog::backdrop { background: #0d0e10d9; backdrop-filter: blur(5px); }
 #closeDetail { position: absolute; right: 16px; top: 12px; width: 42px; height: 42px; color: var(--ink); border: 1px solid var(--line); border-radius: 50%; background: var(--paper); font-size: 28px; z-index: 2; }
 .detail-layout { display: grid; }
-.detail-cover { min-height: 360px; background-size: cover; background-position: center; }
+.detail-cover { min-height: 360px; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; background: var(--surface-soft); isolation: isolate; }
+.detail-cover::before { content: ''; position: absolute; inset: -28px; z-index: -1; background-image: var(--cover-image); background-position: center; background-size: cover; filter: blur(22px); opacity: .28; transform: scale(1.08); }
+.detail-cover img { display: block; width: auto; height: auto; max-width: 100%; max-height: 560px; object-fit: contain; box-shadow: 0 16px 45px #0007; }
 .detail-copy { padding: 38px; }
 .detail-copy h2 { font: 900 35px/1.1 'Space Grotesk', 'Noto Sans SC'; }
 .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); border-top: 1px solid var(--line); margin-top: 25px; }
