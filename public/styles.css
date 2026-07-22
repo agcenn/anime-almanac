@@ -100,9 +100,9 @@ header nav, .hero .border-black\/10 { border-color: var(--line) !important; }
 .hero .text-stone-600, .hero .text-stone-500, #resultInfo, #empty .text-stone-500, footer { color: var(--muted) !important; }
 .detail-copy .text-stone-500 { color: var(--muted) !important; }
 #mobileMenu { border-color: var(--line) !important; }
-#about { background: #151618 !important; color: #f1f2f3; }
-#about .text-stone-600 { color: #a2a7ae !important; }
-#about .text-black { color: #f1f2f3 !important; }
+#about { background: var(--surface) !important; color: var(--ink); border-top: 1px solid var(--line); }
+#about .text-stone-600 { color: var(--muted) !important; }
+#about .text-black { color: var(--ink) !important; }
 footer { background: var(--surface-soft) !important; border-color: var(--line) !important; }
 
 @media (min-width: 640px) {
