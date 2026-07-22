@@ -1,4 +1,5 @@
 const config = require('../config');
+const { isPermanentlyBlockedAnime } = require('./content-policy');
 
 const QUERY = `
 query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyDateInt!) {
@@ -68,7 +69,8 @@ async function fetchAnime() {
   const isExcluded = item => item.genres?.some(genre => genre === 'Ecchi' || genre === 'Hentai')
     || item.tags?.some(tag => tag.isAdult || childTags.has(tag.name))
     || [item.title?.romaji, item.title?.native, item.title?.english].some(title => childrenTitlePattern.test(title || ''))
-    || item.studios?.nodes?.some(studio => childrenStudios.has(studio.name));
+    || item.studios?.nodes?.some(studio => childrenStudios.has(studio.name))
+    || isPermanentlyBlockedAnime(item);
   const excludedIds = all.filter(isExcluded).map(item => item.id);
   const items = all
     .filter(item => !isExcluded(item))

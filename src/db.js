@@ -3,6 +3,7 @@ const path = require('path');
 // Node.js 22+ 内置的同步 SQLite 驱动，无需 Python 或本机编译工具链。
 const { DatabaseSync } = require('node:sqlite');
 const config = require('./config');
+const { isPermanentlyBlockedAnime } = require('./services/content-policy');
 
 fs.mkdirSync(path.dirname(config.databasePath), { recursive: true });
 const db = new DatabaseSync(config.databasePath);
@@ -66,6 +67,22 @@ if (!animeColumns.some(column => column.name === 'description_chinese_source')) 
 }
 if (!animeColumns.some(column => column.name === 'tags')) {
   db.exec("ALTER TABLE anime ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'");
+}
+
+// 每次服务启动都清理永久下架系列，兼容升级前已经存在的本地数据库。
+const blockedRows = db.prepare('SELECT id,title_romaji,title_native,title_english,title_chinese FROM anime').all()
+  .filter(row => isPermanentlyBlockedAnime(row, false));
+if (blockedRows.length) {
+  const removeBlocked = db.prepare('DELETE FROM anime WHERE id = ?');
+  db.exec('BEGIN IMMEDIATE');
+  try {
+    blockedRows.forEach(row => removeBlocked.run(row.id));
+    db.exec('COMMIT');
+    console.log(`[content-policy] 已永久移除 ${blockedRows.length} 条黑名单作品`);
+  } catch (error) {
+    db.exec('ROLLBACK');
+    throw error;
+  }
 }
 
 module.exports = db;

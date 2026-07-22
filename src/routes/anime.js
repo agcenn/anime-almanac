@@ -1,6 +1,7 @@
 const express = require('express');
 const db = require('../db');
 const config = require('../config');
+const { BLOCKED_FRANCHISE_TERMS, isPermanentlyBlockedAnime } = require('../services/content-policy');
 const router = express.Router();
 
 const parseJson = value => { try { return JSON.parse(value || '[]'); } catch { return []; } };
@@ -19,6 +20,7 @@ function releaseWindow(now = new Date()) {
   return {
     year,
     season,
+    today: `${year}-${String(month).padStart(2, '0')}-${String(dateParts.day).padStart(2, '0')}`,
     currentStart: `${year}-${String(currentMonth).padStart(2, '0')}-01`,
     futureStart: `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`
   };
@@ -33,6 +35,13 @@ router.get('/', (req, res) => {
     `tags NOT LIKE '%"Kids"%'`,
     `tags NOT LIKE '%"Educational"%'`
   ], params = {};
+  // 防止旧备份或手动导入的数据绕过永久系列黑名单。
+  const titleColumns = ['title_romaji', 'title_native', 'title_english', 'title_chinese'];
+  BLOCKED_FRANCHISE_TERMS.forEach((term, index) => {
+    const parameter = `blocked${index}`;
+    where.push(`(${titleColumns.map(column => `LOWER(COALESCE(${column}, '')) NOT LIKE @${parameter}`).join(' AND ')})`);
+    params[parameter] = `%${term.toLocaleLowerCase('en-US')}%`;
+  });
   if (year) { where.push('season_year = @year'); params.year = Number(year); }
   if (season) { where.push('season = @season'); params.season = String(season).toUpperCase(); }
   if (status === 'archive') where.push("status IN ('FINISHED','RELEASING')");
@@ -58,8 +67,8 @@ router.get('/', (req, res) => {
   const filterParams = { ...params };
   const take = Math.min(Math.max(Number(limit) || 24, 1), 60);
   const current = Math.max(Number(page) || 1, 1);
-  params.limit = take; params.offset = (current - 1) * take;
-  const items = db.prepare(`SELECT * FROM anime ${clause} ORDER BY CASE WHEN start_date IS NULL THEN 1 ELSE 0 END,start_date DESC LIMIT @limit OFFSET @offset`).all(params).map(decodeRow);
+  params.today = window.today; params.limit = take; params.offset = (current - 1) * take;
+  const items = db.prepare(`SELECT * FROM anime ${clause} ORDER BY CASE WHEN start_date IS NULL THEN 1 ELSE 0 END,ABS(julianday(start_date) - julianday(@today)) ASC,start_date ASC,id ASC LIMIT @limit OFFSET @offset`).all(params).map(decodeRow);
   const total = db.prepare(`SELECT COUNT(*) total FROM anime ${clause}`).get(filterParams).total;
   res.json({ items, pagination: { page: current, limit: take, total, pages: Math.ceil(total / take) } });
 });
@@ -72,7 +81,7 @@ router.get('/meta', (_req, res) => {
 
 router.get('/:id', (req, res) => {
   const item = decodeRow(db.prepare('SELECT * FROM anime WHERE id = ?').get(Number(req.params.id)));
-  if (!item) return res.status(404).json({ error: '未找到该番剧' });
+  if (!item || isPermanentlyBlockedAnime(item, false)) return res.status(404).json({ error: '未找到该番剧' });
   res.json(item);
 });
 

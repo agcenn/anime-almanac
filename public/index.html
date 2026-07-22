@@ -16,12 +16,18 @@
   <header class="max-w-7xl mx-auto px-5 pt-7">
     <nav class="flex items-center justify-between border-b border-stone-900/15 pb-5">
       <a href="#" class="brand text-2xl font-black tracking-tight">番時計<span>°</span></a>
-      <div class="hidden sm:flex items-center gap-7 text-sm font-bold">
-        <button data-mode="upcoming" class="nav-link active">放送予定</button>
-        <button data-mode="archive" class="nav-link">作品資料庫</button>
-        <a href="#about" class="nav-link">关于本站</a>
+      <div class="flex items-center gap-4">
+        <label class="header-search" aria-label="搜索番剧">
+          <span aria-hidden="true">⌕</span>
+          <input id="search" placeholder="搜索番剧" autocomplete="off">
+        </label>
+        <div class="hidden sm:flex items-center gap-4 text-sm font-bold">
+          <button data-mode="upcoming" class="nav-link active">放送予定</button>
+          <button data-mode="archive" class="nav-link">作品資料庫</button>
+          <a href="#about" class="nav-link">关于本站</a>
+        </div>
+        <button id="mobileMenu" class="sm:hidden border border-stone-900 rounded-full px-4 py-2 text-sm font-bold">菜单</button>
       </div>
-      <button id="mobileMenu" class="sm:hidden border border-stone-900 rounded-full px-4 py-2 text-sm font-bold">菜单</button>
     </nav>
   </header>
 
@@ -42,11 +48,10 @@
     </section>
 
     <section class="sticky-filter border-y border-stone-900/15 bg-[#f3f0e8]/95 backdrop-blur">
-      <div class="max-w-7xl mx-auto px-5 py-4 flex flex-col md:flex-row gap-3">
-        <div class="search-box flex-1"><span>⌕</span><input id="search" placeholder="搜索中文、日文或英文名称…" autocomplete="off"></div>
+      <div class="max-w-7xl mx-auto px-5 py-4 flex flex-wrap justify-end gap-3">
         <select id="year" class="archive-filter"><option value="">全部年份</option></select>
         <select id="season" class="archive-filter"><option value="">全部季度</option><option value="WINTER">冬 · 1月</option><option value="SPRING">春 · 4月</option><option value="SUMMER">夏 · 7月</option><option value="FALL">秋 · 10月</option></select>
-        <select id="format"><option value="">全部类型</option><option value="TV">TV</option><option value="MOVIE">剧场版</option><option value="OVA">OVA</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option></select>
+        <select id="format"><option value="">全部形式</option><option value="TV">电视动画</option><option value="TV_SHORT">电视短篇</option><option value="MOVIE">动画电影</option><option value="OVA">原创影像动画</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option><option value="MUSIC">音乐动画</option></select>
       </div>
     </section>
 

@@ -1,11 +1,15 @@
 const state = { mode: 'upcoming', scope: 'current', origin: 'jp', page: 1, pages: 1, loading: false, meta: null };
-const labels = { WINTER: '冬', SPRING: '春', SUMMER: '夏', FALL: '秋', TV_SHORT: '短篇', MOVIE: '剧场版', OVA: 'OVA', ONA: '网络动画', SPECIAL: '特别篇', MANGA: '漫画', LIGHT_NOVEL: '轻小说', ORIGINAL: '原创' };
+const seasonLabels = { WINTER: '冬', SPRING: '春', SUMMER: '夏', FALL: '秋' };
+const formatLabels = { TV: '电视动画', TV_SHORT: '电视短篇', MOVIE: '动画电影', OVA: '原创影像动画', ONA: '网络动画', SPECIAL: '特别篇', MUSIC: '音乐动画' };
+const sourceLabels = { ORIGINAL: '原创企划', MANGA: '漫画', LIGHT_NOVEL: '轻小说', VISUAL_NOVEL: '视觉小说', VIDEO_GAME: '电子游戏', OTHER: '其他', NOVEL: '小说', DOUJINSHI: '同人作品', ANIME: '动画作品', WEB_NOVEL: '网络小说', LIVE_ACTION: '真人作品', GAME: '游戏', COMIC: '漫画', MULTIMEDIA_PROJECT: '多媒体企划', PICTURE_BOOK: '绘本' };
+const genreLabels = { Action: '动作', Adventure: '冒险', Comedy: '喜剧', Drama: '剧情', Fantasy: '奇幻', Horror: '恐怖', 'Mahou Shoujo': '魔法少女', Mecha: '机甲', Music: '音乐', Mystery: '悬疑', Psychological: '心理', Romance: '恋爱', 'Sci-Fi': '科幻', 'Slice of Life': '日常', Sports: '运动', Supernatural: '超自然', Thriller: '惊悚' };
 const $ = selector => document.querySelector(selector);
 const escapeHtml = text => String(text ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 const cleanText = text => escapeHtml(text || '暂无中文简介，等待资料源更新。').replace(/\n/g, '<br>');
 // 主标题只展示正式中文译名；尚未公布的作品不以英文或罗马字冒充中文名。
 const titleOf = item => item.title_chinese || '中文译名待公布';
 const originOf = item => ['CN', 'TW', 'HK'].includes(item.country_of_origin) ? '国创动画' : item.country_of_origin === 'JP' ? '日本番剧' : item.country_of_origin === 'KR' ? '韩国动画' : '其他地区';
+const genresOf = genres => [...new Set((genres || []).map(genre => genreLabels[genre] || '其他题材'))].join(' / ') || '未分类';
 
 function daysUntil(date) {
   if (!date) return null;
@@ -26,8 +30,8 @@ function statusInfo(item) {
 }
 function card(item) {
   const [status, kind] = statusInfo(item), days = daysUntil(item.start_date);
-  const countdown = item.status === 'NOT_YET_RELEASED' && days !== null ? `<span class="countdown">${days > 0 ? `T−${days} DAYS` : days === 0 ? 'TODAY' : 'DATE PENDING'}</span>` : '';
-  return `<article class="anime-card" data-id="${item.id}" tabindex="0"><div class="poster"><img src="${escapeHtml(item.cover_large || '')}" alt="${escapeHtml(titleOf(item))}封面" loading="lazy"><span class="badge ${kind}">${status}</span>${countdown}</div><p class="card-meta"><span class="origin-mark">${originOf(item)}</span> · ${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || 'ANIME'}</p><h3 class="card-title">${escapeHtml(titleOf(item))}</h3><p class="card-native">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="airdate-row"><span>首播</span><strong>${airDateLabel(item.start_date)}</strong></div></article>`;
+  const countdown = item.status === 'NOT_YET_RELEASED' && days !== null ? `<span class="countdown">${days > 0 ? `还有 ${days} 天` : days === 0 ? '今天开播' : '日期待定'}</span>` : '';
+  return `<article class="anime-card" data-id="${item.id}" tabindex="0"><div class="poster"><img src="${escapeHtml(item.cover_large || '')}" alt="${escapeHtml(titleOf(item))}封面" loading="lazy"><span class="badge ${kind}">${status}</span>${countdown}</div><p class="card-meta"><span class="origin-mark">${originOf(item)}</span> · ${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</p><h3 class="card-title">${escapeHtml(titleOf(item))}</h3><p class="card-native">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="airdate-row"><span>首播</span><strong>${airDateLabel(item.start_date)}</strong></div></article>`;
 }
 
 function updateSectionTitle() {
@@ -36,7 +40,7 @@ function updateSectionTitle() {
     return;
   }
   const quarter = state.meta?.currentQuarter;
-  const scope = state.scope === 'current' ? `${quarter?.year || ''}${labels[quarter?.season] || ''}季 · 本季度` : '未来季度';
+  const scope = state.scope === 'current' ? `${quarter?.year || ''}${seasonLabels[quarter?.season] || ''}季 · 本季度` : '未来季度';
   $('#sectionTitle').textContent = `${scope} · ${state.origin === 'jp' ? '日本番剧' : '国创动画'}`;
 }
 
@@ -74,7 +78,7 @@ async function load(reset = true) {
 async function showDetail(id) {
   const item = await fetch(`/api/anime/${id}`).then(r => r.json());
   const [status] = statusInfo(item);
-  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 类型</small><b>${item.season_year || 'TBA'} ${labels[item.season] || ''} · ${labels[item.format] || item.format || '—'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作</small><b>${labels[item.source] || item.source || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>类型</small><b>${escapeHtml(item.genres.join(' / ') || '未分类')}</b></div></div><div class="description">${cleanText(item.description_chinese)}</div></div></div>`;
+  $('#detailContent').innerHTML = `<div class="detail-layout"><div class="detail-cover" style="background-image:url('${escapeHtml(item.cover_large || '')}')"></div><div class="detail-copy"><p class="eyebrow mb-4"><span></span>${escapeHtml(status)}</p><h2>${escapeHtml(titleOf(item))}</h2><p class="mt-3 text-sm text-stone-500">${escapeHtml(item.title_native || item.title_romaji)}</p><div class="detail-grid"><div class="detail-item date-focus"><small>开播日期</small><b>${airDateLabel(item.start_date)}</b></div><div class="detail-item"><small>季度 / 形式</small><b>${item.season_year || '待定'} ${seasonLabels[item.season] || ''} · ${formatLabels[item.format] || '其他动画'}</b></div><div class="detail-item"><small>制作公司</small><b>${escapeHtml(item.studios.join(' / ') || '未公布')}</b></div><div class="detail-item"><small>地区</small><b>${originOf(item)}</b></div><div class="detail-item"><small>原作类型</small><b>${sourceLabels[item.source] || '未公布'}</b></div><div class="detail-item"><small>集数</small><b>${item.episodes || '未公布'}</b></div><div class="detail-item"><small>题材类型</small><b>${escapeHtml(genresOf(item.genres))}</b></div></div><div class="description">${cleanText(item.description_chinese)}</div></div></div>`;
   $('#detail').showModal();
 }
 
