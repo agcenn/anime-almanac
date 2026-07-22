@@ -16,6 +16,8 @@ db.exec(`
     title_native TEXT,
     title_english TEXT,
     title_chinese TEXT,
+    prequel_id INTEGER,
+    country_of_origin TEXT,
     description TEXT,
     cover_large TEXT,
     banner_image TEXT,
@@ -44,5 +46,14 @@ db.exec(`
     message TEXT
   );
 `);
+
+// 兼容已经创建过的数据库：新增字段时自动做一次轻量迁移。
+const animeColumns = db.prepare('PRAGMA table_info(anime)').all();
+if (!animeColumns.some(column => column.name === 'prequel_id')) {
+  db.exec('ALTER TABLE anime ADD COLUMN prequel_id INTEGER');
+}
+if (!animeColumns.some(column => column.name === 'country_of_origin')) {
+  db.exec('ALTER TABLE anime ADD COLUMN country_of_origin TEXT');
+}
 
 module.exports = db;

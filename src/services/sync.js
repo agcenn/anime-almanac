@@ -3,10 +3,10 @@ const { fetchAnime } = require('./anilist');
 const { enrichChineseTitles } = require('./bangumi');
 
 const upsert = db.prepare(`
-  INSERT INTO anime (id,title_romaji,title_native,title_english,title_chinese,description,cover_large,banner_image,format,status,season,season_year,start_date,end_date,episodes,duration,genres,studios,source,site_url,updated_at)
-  VALUES (@id,@title_romaji,@title_native,@title_english,@title_chinese,@description,@cover_large,@banner_image,@format,@status,@season,@season_year,@start_date,@end_date,@episodes,@duration,@genres,@studios,@source,@site_url,@updated_at)
+  INSERT INTO anime (id,title_romaji,title_native,title_english,title_chinese,prequel_id,country_of_origin,description,cover_large,banner_image,format,status,season,season_year,start_date,end_date,episodes,duration,genres,studios,source,site_url,updated_at)
+  VALUES (@id,@title_romaji,@title_native,@title_english,@title_chinese,@prequel_id,@country_of_origin,@description,@cover_large,@banner_image,@format,@status,@season,@season_year,@start_date,@end_date,@episodes,@duration,@genres,@studios,@source,@site_url,@updated_at)
   ON CONFLICT(id) DO UPDATE SET
-    title_romaji=excluded.title_romaji,title_native=excluded.title_native,title_english=excluded.title_english,
+    title_romaji=excluded.title_romaji,title_native=excluded.title_native,title_english=excluded.title_english,prequel_id=excluded.prequel_id,country_of_origin=excluded.country_of_origin,
     description=excluded.description,cover_large=excluded.cover_large,banner_image=excluded.banner_image,
     format=excluded.format,status=excluded.status,season=excluded.season,season_year=excluded.season_year,
     start_date=excluded.start_date,end_date=excluded.end_date,episodes=excluded.episodes,duration=excluded.duration,
@@ -16,7 +16,7 @@ const upsert = db.prepare(`
 function writeBatch(items) {
   db.exec('BEGIN IMMEDIATE');
   try {
-    items.forEach(item => upsert.run(item));
+    items.forEach(({ prequel: _prequel, ...databaseItem }) => upsert.run(databaseItem));
     db.exec('COMMIT');
   } catch (error) {
     db.exec('ROLLBACK');

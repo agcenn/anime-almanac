@@ -6,10 +6,16 @@ query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyD
     pageInfo { hasNextPage }
     media(type: ANIME, isAdult: false, genre_not_in: ["Ecchi", "Hentai"], sort: START_DATE, startDate_greater: $start, startDate_lesser: $end) {
       id title { romaji english native } description(asHtml: false)
-      coverImage { extraLarge large } bannerImage format status season seasonYear
+      coverImage { extraLarge large } bannerImage format status season seasonYear countryOfOrigin
       startDate { year month day } endDate { year month day }
       episodes duration genres source siteUrl
       studios(isMain: true) { nodes { name } }
+      relations {
+        edges {
+          relationType
+          node { id title { romaji english native } startDate { year month day } format countryOfOrigin }
+        }
+      }
     }
   }
 }`;
@@ -62,6 +68,9 @@ async function fetchAnime() {
     title_romaji: item.title.romaji,
     title_native: item.title.native,
     title_english: item.title.english,
+    // PREQUEL 是 AniList 给出的直接前作关系，比只比较相似标题更可靠。
+    prequel_id: item.relations?.edges?.find(edge => edge.relationType === 'PREQUEL')?.node?.id || null,
+    country_of_origin: item.countryOfOrigin,
     // AniList 不保证中文标题；稍后由 Bangumi 的正式 name_cn 字段补充。
     title_chinese: null,
     description: item.description,
@@ -80,7 +89,20 @@ async function fetchAnime() {
     studios: JSON.stringify(item.studios?.nodes?.map(node => node.name) || []),
     source: item.source,
     site_url: item.siteUrl,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      // 仅在本轮译名推断中使用；写入 SQLite 前会被移除。
+      prequel: (() => {
+        const node = item.relations?.edges?.find(edge => edge.relationType === 'PREQUEL')?.node;
+        return node ? {
+          id: node.id,
+          title_romaji: node.title?.romaji,
+          title_native: node.title?.native,
+          title_english: node.title?.english,
+          start_date: isoDate(node.startDate),
+          format: node.format,
+          country_of_origin: node.countryOfOrigin
+        } : null;
+      })()
     }));
 }
 

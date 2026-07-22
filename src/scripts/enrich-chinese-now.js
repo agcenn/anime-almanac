@@ -2,10 +2,9 @@ const db = require('../db');
 const { enrichChineseTitles } = require('../services/bangumi');
 
 const rows = db.prepare(`
-  SELECT id,title_romaji,title_native,title_english,start_date,episodes
+  SELECT id,title_romaji,title_native,title_english,start_date,episodes,format,prequel_id,country_of_origin
   FROM anime
-  WHERE title_chinese IS NULL OR title_chinese = ''
-  ORDER BY start_date DESC
+  ORDER BY start_date ASC
 `).all();
 
 enrichChineseTitles(rows, (done, total, updated) => {

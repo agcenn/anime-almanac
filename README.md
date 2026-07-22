@@ -14,7 +14,7 @@
 │  └─ app.js
 ├─ src/
 │  ├─ routes/anime.js     # 查询、筛选、搜索与详情 API
-│  ├─ scripts/sync-now.js # 手动同步入口
+│  ├─ scripts/            # 手动同步与中文名补全入口
 │  ├─ services/
 │  │  ├─ anilist.js       # AniList GraphQL 客户端
 │  │  └─ sync.js          # SQLite 批量更新事务
@@ -22,7 +22,9 @@
 │  ├─ db.js               # 数据表与索引
 │  ├─ scheduler.js        # node-schedule 定时任务
 │  └─ server.js           # Express 入口
-├─ data/                  # 运行后生成 anime.db（不提交）
+├─ data/
+│  ├─ title-overrides.json # 人工核对后的中文名覆盖表（提交）
+│  └─ anime.db             # 运行后生成（不提交）
 ├─ .env.example
 ├─ .gitignore
 └─ package.json
@@ -36,7 +38,7 @@
 npm install
 copy .env.example .env     # Windows；macOS/Linux 使用 cp
 npm run sync              # 首次拉取 AniList 数据
-npm run sync:titles       # 仅补充数据库中缺失的正式中文译名
+npm run sync:titles       # 补充缺失译名，并应用人工核对的修正
 npm run dev
 ```
 
@@ -54,7 +56,9 @@ npm run dev
 
 AniList 不保证中文译名。数据库使用 `title_chinese` 字段保存经匹配的正式中文译名，页面主标题只显示该字段；缺失时显示“中文译名待公布”。
 
-本站使用 CC BY 4.0 授权的 `bangumi-data`，只读取原始标题、简体中文译名与日期进行本地匹配，不读取其中的播放或资源站点字段。未能可靠匹配的作品显示“中文译名待公布”，不会把英文名或机器翻译冒充正式中文名。
+本站使用 CC BY 4.0 授权的 `bangumi-data`，只读取原始标题、简体中文译名与日期进行本地匹配，不读取其中的播放或资源站点字段。若没有直接译名，会采用中国动画的原生中文标题，读取 AniList 的直接前作关系，再比较数据库内更早开播的同系列 TV/网络作品，并根据已有季数生成“第二季、第三季、后半篇”等名称；仍无法匹配时才调用 MyMemory 机器翻译。机器译名会缓存在 SQLite，不会在每次刷新时改变。
+
+少数品牌名、未公开标题或机器翻译不自然的作品，可在 `data/title-overrides.json` 中按 AniList ID 添加核对后的中文名，再运行 `npm run sync:titles`。覆盖表优先于已有缓存，适合持续修订译名。
 
 ## 定时更新
 
@@ -65,9 +69,13 @@ SYNC_CRON=15 3 * * *
 SYNC_TIMEZONE=Asia/Shanghai
 SYNC_HISTORY_YEARS=6
 ANILIST_TIMEOUT_MS=60000
+TITLE_TRANSLATION_ENABLED=true
+MYMEMORY_ENDPOINT=https://api.mymemory.translated.net/get
+TITLE_TRANSLATION_DELAY_MS=350
+TITLE_TRANSLATION_TIMEOUT_MS=8000
 ```
 
-含义是每天 03:15（北京时间）同步。可改为 `0 */12 * * *` 每 12 小时一次。`SYNC_HISTORY_YEARS` 控制向前读取多少年（默认 6 年），`ANILIST_TIMEOUT_MS` 控制单次请求超时。修改后重启 Node 进程。手动更新使用 `npm run sync`。同步通过 SQLite 事务执行；失败会写入 `sync_log`，不会清空旧数据，并会对限流、5xx 与临时超时自动退避重试。
+含义是每天 03:15（北京时间）同步。可改为 `0 */12 * * *` 每 12 小时一次。`SYNC_HISTORY_YEARS` 控制向前读取多少年（默认 6 年），`ANILIST_TIMEOUT_MS` 控制单次请求超时。MyMemory 的公开翻译接口无需在本项目中配置密钥；如不希望使用机器翻译，可设置 `TITLE_TRANSLATION_ENABLED=false`。修改后重启 Node 进程。手动更新使用 `npm run sync`。同步通过 SQLite 事务执行；失败会写入 `sync_log`，不会清空旧数据，并会对限流、5xx 与临时超时自动退避重试。
 
 ## 部署
 
@@ -86,6 +94,6 @@ GitHub 负责源码托管，不等于 Node.js 服务已上线；如仅启用 Git
 - 仅展示事实性元数据、排期、封面与简介；图片和文本版权归各权利人所有。
 - 不新增播放、在线播放、视频解析、磁力、网盘、下载、种子、字幕下载或影视资源链接功能。
 - 不抓取国内视频站、盗版站或其他未经授权的数据源。
-- AniList 查询设置 `isAdult: false` 并排除 `Hentai`、`Ecchi` 类型；Bangumi 候选也排除 `nsfw` 条目。
+- AniList 查询设置 `isAdult: false` 并排除 `Hentai`、`Ecchi` 类型；中文数据源只参与已有安全条目的标题匹配，不能新增作品。
 - AniList 数据可能延迟或有误，正式日期应以动画官方公告为准。
 - 商用或公开运营前，应核对 AniList API 条款、图片使用政策，并准备权利人投诉与下架渠道。
