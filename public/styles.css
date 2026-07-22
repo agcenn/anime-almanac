@@ -1,12 +1,12 @@
 :root {
-  color-scheme: dark;
-  --paper: #18191c;
-  --surface: #232428;
-  --surface-soft: #2b2c30;
-  --ink: #f1f2f3;
-  --muted: #a2a7ae;
-  --line: rgba(255, 255, 255, .1);
-  --red: #fb7299;
+  color-scheme: light;
+  --paper: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f1f2f3;
+  --ink: #18191c;
+  --muted: #61666d;
+  --line: rgba(24, 25, 28, .12);
+  --red: #f04438;
   --blue: #00aeec;
 }
 
@@ -24,8 +24,8 @@ body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans SC',
 .nav-link { position: relative; padding: 8px 0; }
 .nav-link::after { content: ''; position: absolute; left: 0; right: 100%; bottom: 0; height: 2px; background: var(--blue); transition: .2s; }
 .nav-link.active::after, .nav-link:hover::after { right: 0; }
-.header-search { width: 190px; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid var(--line); background: rgba(255, 255, 255, .035); transition: border-color .18s, background .18s; }
-.header-search:focus-within { border-color: var(--ink); background: rgba(255, 255, 255, .08); }
+.header-search { width: 190px; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 11px; border: 1px solid var(--line); background: #fafafa; transition: border-color .18s, background .18s; }
+.header-search:focus-within { border-color: var(--ink); background: var(--surface); }
 .header-search span { color: var(--red); font-size: 17px; font-weight: 900; }
 .header-search input { min-width: 0; width: 100%; outline: none; background: transparent; font-size: 12px; font-weight: 700; }
 .header-search input { color: var(--ink); }
@@ -34,7 +34,7 @@ body { background: var(--paper); color: var(--ink); font-family: 'Noto Sans SC',
 select { height: 48px; color: var(--ink); border: 1px solid var(--line); background: var(--surface); border-radius: 2px; }
 select { padding: 0 38px 0 14px; font-size: 13px; font-weight: 700; outline: none; }
 select option { color: var(--ink); background: var(--surface); }
-.schedule-controls { display: flex; flex-wrap: wrap; gap: 18px 34px; padding: 22px; border: 1px solid var(--line); background: rgba(255, 255, 255, .025); }
+.schedule-controls { display: flex; flex-wrap: wrap; gap: 18px 34px; padding: 22px; border: 1px solid var(--line); background: #fafafa; }
 .control-label { color: var(--muted); font-size: 10px; font-weight: 900; letter-spacing: .13em; margin-bottom: 8px; text-transform: uppercase; }
 .segment-group { display: flex; gap: 4px; }
 .segment { min-width: 104px; padding: 10px 16px; border: 1px solid var(--line); font-size: 13px; font-weight: 900; transition: .18s ease; }
@@ -48,7 +48,7 @@ select option { color: var(--ink); background: var(--surface); }
 .poster img.quality-fit { object-fit: contain; padding: 8px; background: var(--surface); }
 .anime-card:hover .poster img { transform: scale(1.035); }
 .anime-card:hover .poster img.quality-fit { transform: none; }
-.badge { position: absolute; top: 10px; left: 10px; color: var(--ink); background: rgba(24, 25, 28, .92); border: 1px solid rgba(255, 255, 255, .14); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
+.badge { position: absolute; top: 10px; left: 10px; color: var(--ink); background: rgba(255, 255, 255, .94); border: 1px solid var(--line); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
 .badge.alert { background: var(--red); color: white; }
 .countdown { position: absolute; right: 0; bottom: 0; background: var(--ink); color: var(--paper); padding: 10px 12px; font: 700 11px 'Space Grotesk'; }
 .card-meta { font: 700 10px 'Space Grotesk'; letter-spacing: .1em; color: var(--muted); margin-top: 13px; text-transform: uppercase; }
@@ -72,7 +72,7 @@ dialog::backdrop { background: #0d0e10d9; backdrop-filter: blur(5px); }
 .detail-item { padding: 14px 0; border-bottom: 1px solid var(--line); }
 .detail-item small { display: block; color: var(--muted); font-size: 10px; margin-bottom: 3px; }
 .detail-item.date-focus b { color: var(--red); font: 900 18px 'Space Grotesk', 'Noto Sans SC'; }
-.detail-copy .description { font-size: 13px; line-height: 1.8; color: #c2c6c0; margin-top: 22px; max-height: 150px; overflow: auto; }
+.detail-copy .description { font-size: 13px; line-height: 1.8; color: var(--muted); margin-top: 22px; max-height: 150px; overflow: auto; }
 
 @media (min-width: 640px) {
   .anime-grid { grid-template-columns: repeat(3, 1fr); gap: 38px 20px; }
