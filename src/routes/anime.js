@@ -17,11 +17,12 @@ router.get('/', (req, res) => {
     params.q = `%${q.trim()}%`;
   }
   const clause = where.length ? `WHERE ${where.join(' AND ')}` : '';
+  const filterParams = { ...params };
   const take = Math.min(Math.max(Number(limit) || 24, 1), 60);
   const current = Math.max(Number(page) || 1, 1);
   params.limit = take; params.offset = (current - 1) * take;
   const items = db.prepare(`SELECT * FROM anime ${clause} ORDER BY CASE WHEN start_date IS NULL THEN 1 ELSE 0 END,start_date DESC LIMIT @limit OFFSET @offset`).all(params).map(decodeRow);
-  const total = db.prepare(`SELECT COUNT(*) total FROM anime ${clause}`).get(params).total;
+  const total = db.prepare(`SELECT COUNT(*) total FROM anime ${clause}`).get(filterParams).total;
   res.json({ items, pagination: { page: current, limit: take, total, pages: Math.ceil(total / take) } });
 });
 

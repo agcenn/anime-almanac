@@ -11,7 +11,17 @@ const upsert = db.prepare(`
     start_date=excluded.start_date,end_date=excluded.end_date,episodes=excluded.episodes,duration=excluded.duration,
     genres=excluded.genres,studios=excluded.studios,source=excluded.source,site_url=excluded.site_url,updated_at=excluded.updated_at
 `);
-const writeBatch = db.transaction(items => items.forEach(item => upsert.run(item)));
+// 内置 node:sqlite 没有 transaction 包装器，显式事务仍可确保批量写入原子性。
+function writeBatch(items) {
+  db.exec('BEGIN IMMEDIATE');
+  try {
+    items.forEach(item => upsert.run(item));
+    db.exec('COMMIT');
+  } catch (error) {
+    db.exec('ROLLBACK');
+    throw error;
+  }
+}
 
 let running = false;
 async function syncAnime() {

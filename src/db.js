@@ -1,12 +1,13 @@
 const fs = require('fs');
 const path = require('path');
-const Database = require('better-sqlite3');
+// Node.js 22+ 内置的同步 SQLite 驱动，无需 Python 或本机编译工具链。
+const { DatabaseSync } = require('node:sqlite');
 const config = require('./config');
 
 fs.mkdirSync(path.dirname(config.databasePath), { recursive: true });
-const db = new Database(config.databasePath);
-db.pragma('journal_mode = WAL');
-db.pragma('foreign_keys = ON');
+const db = new DatabaseSync(config.databasePath);
+db.exec('PRAGMA journal_mode = WAL');
+db.exec('PRAGMA foreign_keys = ON');
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS anime (

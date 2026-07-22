@@ -17,27 +17,37 @@ query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyD
 const fuzzy = (date) => Number(`${date.getUTCFullYear()}${String(date.getUTCMonth() + 1).padStart(2, '0')}${String(date.getUTCDate()).padStart(2, '0')}`);
 const isoDate = (value) => value?.year ? `${value.year}-${String(value.month || 1).padStart(2, '0')}-${String(value.day || 1).padStart(2, '0')}` : null;
 
-async function request(variables, attempt = 0) {
-  const response = await fetch(config.anilistEndpoint, {
-    method: 'POST',
-    headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ query: QUERY, variables }),
-    signal: AbortSignal.timeout(30000)
-  });
-  if (response.status === 429 && attempt < 3) {
-    await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)));
-    return request(variables, attempt + 1);
+async function request(variables) {
+  let lastError;
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    try {
+      const response = await fetch(config.anilistEndpoint, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', accept: 'application/json' },
+        body: JSON.stringify({ query: QUERY, variables }),
+        signal: AbortSignal.timeout(config.anilistTimeoutMs)
+      });
+      if (response.status === 429 || response.status >= 500) {
+        lastError = new Error(`AniList 暂时不可用：HTTP ${response.status}`);
+      } else {
+        if (!response.ok) throw new Error(`AniList 请求失败：HTTP ${response.status}`);
+        const json = await response.json();
+        if (json.errors) throw new Error(json.errors.map(item => item.message).join('; '));
+        return json.data.Page;
+      }
+    } catch (error) {
+      lastError = error;
+    }
+    // 对限流、服务端错误和临时网络超时做指数退避，最多重试四次。
+    if (attempt < 4) await new Promise(resolve => setTimeout(resolve, 2000 * (2 ** attempt)));
   }
-  if (!response.ok) throw new Error(`AniList 请求失败：HTTP ${response.status}`);
-  const json = await response.json();
-  if (json.errors) throw new Error(json.errors.map(item => item.message).join('; '));
-  return json.data.Page;
+  throw lastError;
 }
 
 // 同步最近 8 年至未来 3 年，兼顾资料库与已公布的远期企划。
 async function fetchAnime() {
   const now = new Date();
-  const start = new Date(Date.UTC(now.getUTCFullYear() - 8, 0, 1));
+  const start = new Date(Date.UTC(now.getUTCFullYear() - config.syncHistoryYears, 0, 1));
   const end = new Date(Date.UTC(now.getUTCFullYear() + 3, 11, 31));
   const all = [];
   for (let page = 1; page <= 100; page += 1) {
