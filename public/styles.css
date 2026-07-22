@@ -70,7 +70,7 @@ select option { color: var(--ink); background: var(--surface); }
 .poster img.quality-fit { object-fit: contain; padding: 8px; background: var(--surface); }
 .anime-card:hover .poster img { transform: scale(1.035); }
 .anime-card:hover .poster img.quality-fit { transform: none; }
-.badge { position: absolute; top: 10px; left: 10px; color: var(--ink); background: rgba(255, 255, 255, .94); border: 1px solid var(--line); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
+.badge { position: absolute; top: 10px; left: 10px; color: #18191c; background: rgba(255, 255, 255, .94); border: 1px solid rgba(24, 25, 28, .12); font-size: 10px; font-weight: 900; padding: 6px 9px; letter-spacing: .06em; }
 .badge.alert { background: var(--red); color: white; }
 .countdown { position: absolute; right: 0; bottom: 0; background: var(--ink); color: var(--paper); padding: 10px 12px; font: 700 11px 'Space Grotesk'; }
 .card-meta { font: 700 10px 'Space Grotesk'; letter-spacing: .1em; color: var(--muted); margin-top: 13px; text-transform: uppercase; }
@@ -81,11 +81,11 @@ select option { color: var(--ink); background: var(--surface); }
 .airdate-row strong { font: 700 12px 'Space Grotesk', 'Noto Sans SC'; letter-spacing: .015em; white-space: nowrap; }
 .load-more { border-bottom: 2px solid var(--ink); font-size: 13px; font-weight: 900; padding: 10px 2px; }
 .load-more span { color: var(--red); margin-left: 8px; }
-dialog { padding: 0; border: 1px solid var(--line); max-width: 920px; width: calc(100% - 24px); max-height: calc(100vh - 24px); overflow-y: auto; background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px var(--shadow); }
+dialog { padding: 0; border: 1px solid var(--line); max-width: 1040px; width: calc(100% - 24px); max-height: calc(100vh - 24px); overflow-y: auto; background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px var(--shadow); }
 dialog::backdrop { background: #0d0e10d9; backdrop-filter: blur(5px); }
 #closeDetail { position: absolute; right: 16px; top: 12px; width: 42px; height: 42px; color: var(--ink); border: 1px solid var(--line); border-radius: 50%; background: var(--paper); font-size: 28px; z-index: 2; }
 .detail-layout { display: grid; }
-.detail-cover { min-height: 360px; background-color: var(--surface-soft); background-size: cover; background-position: center; }
+.detail-cover { min-height: 360px; background-color: var(--surface-soft); background-size: cover; background-position: center top; }
 .detail-copy { padding: 38px; }
 .detail-copy h2 { font: 900 35px/1.1 'Space Grotesk', 'Noto Sans SC'; }
 .detail-summary { margin-top: 24px; padding: 18px 20px 19px; border-left: 4px solid var(--red); background: var(--surface-soft); }
@@ -97,10 +97,12 @@ dialog::backdrop { background: #0d0e10d9; backdrop-filter: blur(5px); }
 .detail-item.date-focus b { color: var(--red); font: 900 16px 'Space Grotesk', 'Noto Sans SC'; }
 .detail-copy .description { color: var(--ink); font-size: 15px; line-height: 1.95; margin-top: 9px; }
 header nav, .hero .border-black\/10 { border-color: var(--line) !important; }
-.hero .text-stone-600, .hero .text-stone-500, #resultInfo, #empty .text-stone-500, #about .text-stone-600, footer { color: var(--muted) !important; }
+.hero .text-stone-600, .hero .text-stone-500, #resultInfo, #empty .text-stone-500, footer { color: var(--muted) !important; }
 .detail-copy .text-stone-500 { color: var(--muted) !important; }
 #mobileMenu { border-color: var(--line) !important; }
-#about .text-black { color: var(--ink) !important; }
+#about { background: #151618 !important; color: #f1f2f3; }
+#about .text-stone-600 { color: #a2a7ae !important; }
+#about .text-black { color: #f1f2f3 !important; }
 footer { background: var(--surface-soft) !important; border-color: var(--line) !important; }
 
 @media (min-width: 640px) {
@@ -109,10 +111,10 @@ footer { background: var(--surface-soft) !important; border-color: var(--line) !
 
 @media (min-width: 1024px) {
   .anime-grid { grid-template-columns: repeat(5, 1fr); gap: 45px 22px; }
-  dialog { width: min(920px, calc(100vw - 32px)); height: min(720px, calc(100vh - 32px)); max-height: none; overflow: hidden; }
-  .detail-layout { grid-template-columns: 38% 62%; height: 100%; }
+  dialog { width: min(1040px, calc(100vw - 32px)); height: min(680px, calc(100vh - 32px)); max-height: none; overflow: hidden; }
+  .detail-layout { grid-template-columns: 42% 58%; height: 100%; }
   .detail-cover { min-height: 0; height: 100%; }
-  .detail-copy { height: 100%; overflow-y: auto; scrollbar-gutter: stable; }
+  .detail-copy { height: 100%; padding: 34px; overflow-y: auto; scrollbar-gutter: stable; }
 }
 
 @media (max-width: 639px) {
