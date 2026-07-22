@@ -3,6 +3,7 @@ const path = require('path');
 const { items: bangumiItems } = require('bangumi-data');
 const config = require('../config');
 const db = require('../db');
+const { translateText } = require('./translate');
 
 const overridePath = path.resolve(__dirname, '../../data/title-overrides.json');
 const titleOverrides = fs.existsSync(overridePath) ? JSON.parse(fs.readFileSync(overridePath, 'utf8')) : {};
@@ -156,25 +157,6 @@ function findFranchisePrefix(item) {
   return null;
 }
 
-function detectLanguage(source) {
-  if (/[\u3040-\u30ff]/u.test(source)) return 'ja';
-  if (/[\uac00-\ud7af]/u.test(source)) return 'ko';
-  return 'en';
-}
-
-async function requestTranslation(source) {
-  const url = new URL(config.myMemoryEndpoint);
-  url.searchParams.set('q', source.slice(0, 450));
-  url.searchParams.set('langpair', `${detectLanguage(source)}|zh-CN`);
-  url.searchParams.set('mt', '1');
-  const response = await fetch(url, { signal: AbortSignal.timeout(config.titleTranslationTimeoutMs) });
-  if (!response.ok) throw new Error(`翻译接口 HTTP ${response.status}`);
-  const result = await response.json();
-  const translated = result.responseData?.translatedText?.trim();
-  if (!translated || /MYMEMORY WARNING/i.test(translated) || normalize(translated) === normalize(source)) return null;
-  return translated.replaceAll('&quot;', '"').replaceAll('&#39;', "'").replaceAll('&amp;', '&');
-}
-
 async function translateTitle(item) {
   // AniList 有英文名时优先翻译语义更稳定的英文；无英文名再回退到日/韩原名。
   const source = item.title_english || item.title_native || item.title_romaji;
@@ -183,10 +165,10 @@ async function translateTitle(item) {
   if (franchise) {
     const explicitSeason = seasonNumber(item.title_romaji, item.title_native, item.title_english);
     if (explicitSeason) return `${franchise.chinese} 第${numberToChinese(explicitSeason)}季`;
-    const translatedSuffix = await requestTranslation(franchise.suffix);
+    const translatedSuffix = await translateText(franchise.suffix);
     if (translatedSuffix) return `${franchise.chinese}：${translatedSuffix}`;
   }
-  return requestTranslation(source);
+  return translateText(source);
 }
 
 async function enrichChineseTitles(items, onProgress = null) {

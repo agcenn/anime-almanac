@@ -19,6 +19,8 @@ db.exec(`
     prequel_id INTEGER,
     country_of_origin TEXT,
     description TEXT,
+    description_chinese TEXT,
+    description_chinese_source TEXT,
     cover_large TEXT,
     banner_image TEXT,
     format TEXT,
@@ -30,6 +32,7 @@ db.exec(`
     episodes INTEGER,
     duration INTEGER,
     genres TEXT NOT NULL DEFAULT '[]',
+    tags TEXT NOT NULL DEFAULT '[]',
     studios TEXT NOT NULL DEFAULT '[]',
     source TEXT,
     site_url TEXT,
@@ -54,6 +57,15 @@ if (!animeColumns.some(column => column.name === 'prequel_id')) {
 }
 if (!animeColumns.some(column => column.name === 'country_of_origin')) {
   db.exec('ALTER TABLE anime ADD COLUMN country_of_origin TEXT');
+}
+if (!animeColumns.some(column => column.name === 'description_chinese')) {
+  db.exec('ALTER TABLE anime ADD COLUMN description_chinese TEXT');
+}
+if (!animeColumns.some(column => column.name === 'description_chinese_source')) {
+  db.exec('ALTER TABLE anime ADD COLUMN description_chinese_source TEXT');
+}
+if (!animeColumns.some(column => column.name === 'tags')) {
+  db.exec("ALTER TABLE anime ADD COLUMN tags TEXT NOT NULL DEFAULT '[]'");
 }
 
 module.exports = db;

@@ -12,5 +12,8 @@ module.exports = {
   titleTranslationEnabled: process.env.TITLE_TRANSLATION_ENABLED !== 'false',
   myMemoryEndpoint: process.env.MYMEMORY_ENDPOINT || 'https://api.mymemory.translated.net/get',
   titleTranslationDelayMs: Math.max(Number(process.env.TITLE_TRANSLATION_DELAY_MS || 350), 200),
-  titleTranslationTimeoutMs: Math.max(Number(process.env.TITLE_TRANSLATION_TIMEOUT_MS || 8000), 3000)
+  titleTranslationTimeoutMs: Math.max(Number(process.env.TITLE_TRANSLATION_TIMEOUT_MS || 8000), 3000),
+  descriptionTranslationEnabled: process.env.DESCRIPTION_TRANSLATION_ENABLED !== 'false',
+  descriptionTranslationBatchSize: Math.max(Number(process.env.DESCRIPTION_TRANSLATION_BATCH_SIZE || 40), 0),
+  descriptionTranslationMaxChars: Math.max(Number(process.env.DESCRIPTION_TRANSLATION_MAX_CHARS || 1200), 200)
 };

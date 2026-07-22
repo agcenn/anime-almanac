@@ -9,6 +9,7 @@ query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyD
       coverImage { extraLarge large } bannerImage format status season seasonYear countryOfOrigin
       startDate { year month day } endDate { year month day }
       episodes duration genres source siteUrl
+      tags { name rank isAdult }
       studios(isMain: true) { nodes { name } }
       relations {
         edges {
@@ -22,6 +23,8 @@ query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyD
 
 const fuzzy = (date) => Number(`${date.getUTCFullYear()}${String(date.getUTCMonth() + 1).padStart(2, '0')}${String(date.getUTCDate()).padStart(2, '0')}`);
 const isoDate = (value) => value?.year ? `${value.year}-${String(value.month || 1).padStart(2, '0')}-${String(value.day || 1).padStart(2, '0')}` : null;
+const childrenTitlePattern = /(喜羊羊|熊出没|猪猪侠|超级飞侠|汪汪队|小猪佩奇|巴啦啦|叶罗丽|花仙子|アンパンマン|Anpanman|ドラえもん|Doraemon|クレヨンしんちゃん|Crayon Shin-chan|ポケモン|Pok[eé]mon|プリキュア|Precure|Pretty Cure|しまじろう|Shimajirou|ちびまる子ちゃん|Chibi Maruko)/iu;
+const childrenStudios = new Set(['Creative Power Entertaining', 'Fantawild Animation', 'Auldey', 'Wawayu Animation']);
 
 async function request(variables) {
   let lastError;
@@ -61,8 +64,14 @@ async function fetchAnime() {
     all.push(...result.media);
     if (!result.pageInfo.hasNextPage) break;
   }
-  return all
-    .filter(item => !item.genres?.some(genre => genre === 'Ecchi' || genre === 'Hentai'))
+  const childTags = new Set(['Kids', 'Educational']);
+  const isExcluded = item => item.genres?.some(genre => genre === 'Ecchi' || genre === 'Hentai')
+    || item.tags?.some(tag => tag.isAdult || childTags.has(tag.name))
+    || [item.title?.romaji, item.title?.native, item.title?.english].some(title => childrenTitlePattern.test(title || ''))
+    || item.studios?.nodes?.some(studio => childrenStudios.has(studio.name));
+  const excludedIds = all.filter(isExcluded).map(item => item.id);
+  const items = all
+    .filter(item => !isExcluded(item))
     .map(item => ({
     id: item.id,
     title_romaji: item.title.romaji,
@@ -74,6 +83,8 @@ async function fetchAnime() {
     // AniList 不保证中文标题；稍后由 Bangumi 的正式 name_cn 字段补充。
     title_chinese: null,
     description: item.description,
+    description_chinese: null,
+    description_chinese_source: null,
     // 优先使用 AniList 的最高分辨率封面；旧作品缺图时再回退到 large。
     cover_large: item.coverImage?.extraLarge || item.coverImage?.large,
     banner_image: item.bannerImage,
@@ -86,6 +97,7 @@ async function fetchAnime() {
     episodes: item.episodes,
     duration: item.duration,
     genres: JSON.stringify(item.genres || []),
+    tags: JSON.stringify(item.tags?.map(tag => tag.name) || []),
     studios: JSON.stringify(item.studios?.nodes?.map(node => node.name) || []),
     source: item.source,
     site_url: item.siteUrl,
@@ -104,6 +116,7 @@ async function fetchAnime() {
         } : null;
       })()
     }));
+  return { items, excludedIds };
 }
 
 module.exports = { fetchAnime };

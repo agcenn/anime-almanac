@@ -43,14 +43,30 @@
 
     <section class="sticky-filter border-y border-stone-900/15 bg-[#f3f0e8]/95 backdrop-blur">
       <div class="max-w-7xl mx-auto px-5 py-4 flex flex-col md:flex-row gap-3">
-        <div class="search-box flex-1"><span>⌕</span><input id="search" placeholder="搜索日文、英文或罗马字标题…" autocomplete="off"></div>
-        <select id="year"><option value="">全部年份</option></select>
-        <select id="season"><option value="">全部季度</option><option value="WINTER">冬 · 1月</option><option value="SPRING">春 · 4月</option><option value="SUMMER">夏 · 7月</option><option value="FALL">秋 · 10月</option></select>
+        <div class="search-box flex-1"><span>⌕</span><input id="search" placeholder="搜索中文、日文或英文名称…" autocomplete="off"></div>
+        <select id="year" class="archive-filter"><option value="">全部年份</option></select>
+        <select id="season" class="archive-filter"><option value="">全部季度</option><option value="WINTER">冬 · 1月</option><option value="SPRING">春 · 4月</option><option value="SUMMER">夏 · 7月</option><option value="FALL">秋 · 10月</option></select>
         <select id="format"><option value="">全部类型</option><option value="TV">TV</option><option value="MOVIE">剧场版</option><option value="OVA">OVA</option><option value="ONA">网络动画</option><option value="SPECIAL">特别篇</option></select>
       </div>
     </section>
 
     <section class="max-w-7xl mx-auto px-5 py-10">
+      <div id="scheduleControls" class="schedule-controls mb-9">
+        <div>
+          <p class="control-label">放送范围</p>
+          <div class="segment-group" aria-label="放送范围">
+            <button class="segment active" data-scope="current">本季度</button>
+            <button class="segment" data-scope="future">未来季度</button>
+          </div>
+        </div>
+        <div>
+          <p class="control-label">作品地区</p>
+          <div class="segment-group" aria-label="作品地区">
+            <button class="segment active" data-origin="jp">日本番剧</button>
+            <button class="segment" data-origin="cn">国创动画</button>
+          </div>
+        </div>
+      </div>
       <div class="flex justify-between items-baseline mb-7">
         <h2 id="sectionTitle" class="text-3xl md:text-4xl font-black tracking-tight">放送予定</h2>
         <p id="resultInfo" class="text-xs font-bold text-stone-500 tracking-widest uppercase">Loading archive</p>
