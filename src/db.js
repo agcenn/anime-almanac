@@ -1,0 +1,47 @@
+const fs = require('fs');
+const path = require('path');
+const Database = require('better-sqlite3');
+const config = require('./config');
+
+fs.mkdirSync(path.dirname(config.databasePath), { recursive: true });
+const db = new Database(config.databasePath);
+db.pragma('journal_mode = WAL');
+db.pragma('foreign_keys = ON');
+
+db.exec(`
+  CREATE TABLE IF NOT EXISTS anime (
+    id INTEGER PRIMARY KEY,
+    title_romaji TEXT NOT NULL,
+    title_native TEXT,
+    title_english TEXT,
+    title_chinese TEXT,
+    description TEXT,
+    cover_large TEXT,
+    banner_image TEXT,
+    format TEXT,
+    status TEXT,
+    season TEXT,
+    season_year INTEGER,
+    start_date TEXT,
+    end_date TEXT,
+    episodes INTEGER,
+    duration INTEGER,
+    genres TEXT NOT NULL DEFAULT '[]',
+    studios TEXT NOT NULL DEFAULT '[]',
+    source TEXT,
+    site_url TEXT,
+    updated_at TEXT NOT NULL
+  );
+  CREATE INDEX IF NOT EXISTS idx_anime_season ON anime(season_year, season);
+  CREATE INDEX IF NOT EXISTS idx_anime_status ON anime(status);
+  CREATE TABLE IF NOT EXISTS sync_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    started_at TEXT NOT NULL,
+    finished_at TEXT,
+    status TEXT NOT NULL,
+    records INTEGER NOT NULL DEFAULT 0,
+    message TEXT
+  );
+`);
+
+module.exports = db;
