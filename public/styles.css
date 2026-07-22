@@ -81,12 +81,12 @@ select option { color: var(--ink); background: var(--surface); }
 .airdate-row strong { font: 700 12px 'Space Grotesk', 'Noto Sans SC'; letter-spacing: .015em; white-space: nowrap; }
 .load-more { border-bottom: 2px solid var(--ink); font-size: 13px; font-weight: 900; padding: 10px 2px; }
 .load-more span { color: var(--red); margin-left: 8px; }
-dialog { padding: 0; border: 1px solid var(--line); max-width: 920px; width: calc(100% - 24px); max-height: calc(100vh - 24px); overflow: hidden; background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px var(--shadow); }
+dialog { padding: 0; border: 1px solid var(--line); max-width: 920px; width: calc(100% - 24px); max-height: calc(100vh - 24px); overflow-y: auto; background: var(--surface); color: var(--ink); box-shadow: 0 25px 80px var(--shadow); }
 dialog::backdrop { background: #0d0e10d9; backdrop-filter: blur(5px); }
 #closeDetail { position: absolute; right: 16px; top: 12px; width: 42px; height: 42px; color: var(--ink); border: 1px solid var(--line); border-radius: 50%; background: var(--paper); font-size: 28px; z-index: 2; }
 .detail-layout { display: grid; }
 .detail-cover { min-height: 360px; background-color: var(--surface-soft); background-size: cover; background-position: center; }
-.detail-copy { padding: 38px; max-height: calc(100vh - 26px); overflow-y: auto; }
+.detail-copy { padding: 38px; }
 .detail-copy h2 { font: 900 35px/1.1 'Space Grotesk', 'Noto Sans SC'; }
 .detail-summary { margin-top: 24px; padding: 18px 20px 19px; border-left: 4px solid var(--red); background: var(--surface-soft); }
 .detail-summary-label { color: var(--red); font-size: 11px; font-weight: 900; letter-spacing: .14em; }
@@ -109,8 +109,10 @@ footer { background: var(--surface-soft) !important; border-color: var(--line) !
 
 @media (min-width: 1024px) {
   .anime-grid { grid-template-columns: repeat(5, 1fr); gap: 45px 22px; }
-  .detail-layout { grid-template-columns: 38% 62%; }
-  .detail-cover { min-height: 600px; }
+  dialog { width: min(920px, calc(100vw - 32px)); height: min(720px, calc(100vh - 32px)); max-height: none; overflow: hidden; }
+  .detail-layout { grid-template-columns: 38% 62%; height: 100%; }
+  .detail-cover { min-height: 0; height: 100%; }
+  .detail-copy { height: 100%; overflow-y: auto; scrollbar-gutter: stable; }
 }
 
 @media (max-width: 639px) {
