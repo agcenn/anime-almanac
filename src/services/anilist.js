@@ -6,7 +6,7 @@ query AnimePage($page: Int!, $perPage: Int!, $start: FuzzyDateInt!, $end: FuzzyD
     pageInfo { hasNextPage }
     media(type: ANIME, sort: START_DATE, startDate_greater: $start, startDate_lesser: $end) {
       id title { romaji english native } description(asHtml: false)
-      coverImage { large } bannerImage format status season seasonYear
+      coverImage { extraLarge large } bannerImage format status season seasonYear
       startDate { year month day } endDate { year month day }
       episodes duration genres source siteUrl
       studios(isMain: true) { nodes { name } }
@@ -63,7 +63,8 @@ async function fetchAnime() {
     // AniList 不保证中文标题；展示时按 native/romaji 回退，不凭空翻译。
     title_chinese: null,
     description: item.description,
-    cover_large: item.coverImage?.large,
+    // 优先使用 AniList 的最高分辨率封面；旧作品缺图时再回退到 large。
+    cover_large: item.coverImage?.extraLarge || item.coverImage?.large,
     banner_image: item.bannerImage,
     format: item.format,
     status: item.status,
